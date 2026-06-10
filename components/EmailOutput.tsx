@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 interface EmailOutputProps {
   recipientName: string | null;
   emailContent: string | null;
@@ -11,15 +13,35 @@ function SkeletonLine({ width }: { width: string }) {
 }
 
 export default function EmailOutput({ recipientName, emailContent, isGenerating }: EmailOutputProps) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    if (!emailContent) return;
+    await navigator.clipboard.writeText(emailContent);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col gap-4 min-h-[400px]">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <h2 className="text-lg font-bold text-gray-800">Generated Email</h2>
-        {recipientName && (
-          <span className="text-sm text-pink-600 font-medium bg-pink-50 px-3 py-1 rounded-full">
-            To: {recipientName}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {emailContent && (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="text-sm font-medium px-3 py-1 rounded-full border border-gray-200 hover:border-pink-300 hover:text-pink-600 text-gray-500 transition-colors"
+            >
+              {copied ? '✓ Copied!' : 'Copy'}
+            </button>
+          )}
+          {recipientName && (
+            <span className="text-sm text-pink-600 font-medium bg-pink-50 px-3 py-1 rounded-full">
+              To: {recipientName}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="flex-1">
