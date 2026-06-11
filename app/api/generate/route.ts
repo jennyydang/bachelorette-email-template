@@ -29,7 +29,16 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ email });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    return NextResponse.json({ error: message }, { status: 500 });
+    const errMsg = err instanceof Error ? err.message : 'Unknown error';
+    const isAuthError = errMsg.toLowerCase().includes('auth') || errMsg.toLowerCase().includes('api key');
+    const isConnError = errMsg.toLowerCase().includes('connect') || errMsg.toLowerCase().includes('fetch');
+
+    const userMessage = isAuthError
+      ? 'Invalid API key — check your ANTHROPIC_API_KEY in .env.local'
+      : isConnError
+      ? 'Could not reach Anthropic servers — check your internet connection or API key'
+      : errMsg;
+
+    return NextResponse.json({ error: userMessage }, { status: 500 });
   }
 }
