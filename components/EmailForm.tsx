@@ -18,7 +18,7 @@ export default function EmailForm({ onGenerate, isGenerating }: EmailFormProps) 
   const [brideName, setBrideName] = useState('');
   const [tripDate, setTripDate] = useState('');
   const [destination, setDestination] = useState('');
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState(() => buildDefaultPrompt([], '', ''));
   const [from, setFrom] = useState('');
   const isPromptCustomized = useRef(false);
 
@@ -57,7 +57,15 @@ export default function EmailForm({ onGenerate, isGenerating }: EmailFormProps) 
   const canGenerate = recipients.length > 0 && prompt.trim().length > 0 && !isGenerating;
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col gap-5">
+    <form
+      onSubmit={handleSubmit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' && (e.target as HTMLElement).tagName === 'INPUT') {
+          e.preventDefault();
+        }
+      }}
+      className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col gap-5"
+    >
       <h2 className="text-lg font-bold text-gray-800">Email Details</h2>
 
       {/* Type */}

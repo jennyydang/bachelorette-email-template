@@ -27,6 +27,7 @@ export default function PillInput({ value, onChange, placeholder = 'Type and pre
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       e.preventDefault();
+      e.stopPropagation();
       addRecipient(inputValue);
       setInputValue('');
     } else if (e.key === 'Backspace' && inputValue === '') {
