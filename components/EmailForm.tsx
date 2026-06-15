@@ -18,17 +18,18 @@ export default function EmailForm({ onGenerate, isGenerating }: EmailFormProps) 
   const [brideName, setBrideName] = useState('');
   const [tripDate, setTripDate] = useState('');
   const [destination, setDestination] = useState('');
-  const [prompt, setPrompt] = useState(() => buildDefaultPrompt([], '', ''));
+  const [guestCount, setGuestCount] = useState('');
+  const [prompt, setPrompt] = useState(() => buildDefaultPrompt([], '', '', ''));
   const [from, setFrom] = useState('');
   const isPromptCustomized = useRef(false);
 
   useEffect(() => {
     if (type === 'Bachelorette' && !isPromptCustomized.current) {
-      setPrompt(buildDefaultPrompt(recipients, destination, brideName));
+      setPrompt(buildDefaultPrompt(recipients, destination, brideName, guestCount));
     } else if (type === 'UGC' && !isPromptCustomized.current) {
       setPrompt('');
     }
-  }, [type, destination, brideName, recipients]);
+  }, [type, destination, brideName, recipients, guestCount]);
 
   function handleTypeChange(newType: 'Bachelorette' | 'UGC') {
     setType(newType);
@@ -43,7 +44,7 @@ export default function EmailForm({ onGenerate, isGenerating }: EmailFormProps) 
   function handleResetPrompt() {
     isPromptCustomized.current = false;
     if (type === 'Bachelorette') {
-      setPrompt(buildDefaultPrompt(recipients, destination, brideName));
+      setPrompt(buildDefaultPrompt(recipients, destination, brideName, guestCount));
     } else {
       setPrompt('');
     }
@@ -51,7 +52,7 @@ export default function EmailForm({ onGenerate, isGenerating }: EmailFormProps) 
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    onGenerate({ type, recipients, brideName, tripDate, destination, prompt, from });
+    onGenerate({ type, recipients, brideName, tripDate, destination, guestCount, prompt, from });
   }
 
   const canGenerate = recipients.length > 0 && prompt.trim().length > 0 && !isGenerating;
@@ -127,6 +128,19 @@ export default function EmailForm({ onGenerate, isGenerating }: EmailFormProps) 
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               placeholder="e.g. Nashville"
+              className={FIELD_CLASSES}
+              disabled={isGenerating}
+            />
+          </div>
+
+          <div>
+            <label className={LABEL_CLASSES}>Number of Guests</label>
+            <input
+              type="number"
+              min={1}
+              value={guestCount}
+              onChange={(e) => setGuestCount(e.target.value)}
+              placeholder="e.g. 8"
               className={FIELD_CLASSES}
               disabled={isGenerating}
             />
